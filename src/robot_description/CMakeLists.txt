@@ -3,7 +3,7 @@ project(ros2_project)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY urdf launch meshes rviz
+install(DIRECTORY urdf launch meshes rviz worlds
   DESTINATION share/${PROJECT_NAME}
 )
 

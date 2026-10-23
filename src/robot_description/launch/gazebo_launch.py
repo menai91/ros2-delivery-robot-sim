@@ -16,12 +16,15 @@ def generate_launch_description():
     with open(urdf_path, 'r') as f:
         robot_description = f.read()
  
+    world_file = os.path.join(
+        get_package_share_directory('ros2_project'), 'worlds', 'my_world.sdf')
+        
     # Use IncludeLaunchDescription to launch another launch.py
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim_share, 'launch', 'gz_sim.launch.py')
         ),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items(),
+            launch_arguments={'gz_args': f'-r {world_file}'}.items(),
     )
  
     # 2. Publish the URDF on /robot_description (and TF for the fixed joints)
@@ -60,14 +63,29 @@ def generate_launch_description():
                 '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
                 '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
                 '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+                '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+                '/camera/image_raw@sensor_msgs/msg/Image[gz.msgs.Image',
+                '/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
             ],
             output='screen',
    )
+
+    rviz_config = os.path.join(
+        get_package_share_directory('ros2_project'), 'rviz', 'urdf_config.rviz')
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', rviz_config],
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
 
     return LaunchDescription([
         gz_sim,
         robot_state_publisher,
         spawn_robot,
         gazebo_bridge,
+        rviz_node,
     ])
  
