@@ -28,7 +28,10 @@ def generate_launch_description():
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description}],
+        parameters=[{
+            'robot_description': robot_description,
+            'use_sim_time': True,
+        }],
         output='screen',
     )
  
@@ -43,10 +46,28 @@ def generate_launch_description():
         ],
         output='screen',
     )
- 
+
+    gazebo_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            # direction of where the message / topic goes
+            # [ Gazebo to ROS (the robot’s outputs, like odometry)
+            # ] ROS to Gazebo (commands into the robot, like /cmd_vel)
+            # @ both ways
+                '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+                '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+                '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+                '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
+                '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            ],
+            output='screen',
+   )
+
     return LaunchDescription([
         gz_sim,
         robot_state_publisher,
         spawn_robot,
+        gazebo_bridge,
     ])
  
