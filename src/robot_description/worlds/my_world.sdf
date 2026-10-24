@@ -261,6 +261,129 @@ gz service -s /world/empty/create \
       <static>false</static>
       <self_collide>false</self_collide>
     </model>
+<model name="obstacle_box_1">
+  <static>true</static>
+  <pose>3 0 0.5 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><box><size>1 1 1</size></box></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><box><size>1 1 1</size></box></geometry>
+      <material>
+        <ambient>0.8 0.2 0.2 1</ambient>
+        <diffuse>0.8 0.2 0.2 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<!-- Obstacle 2: Box offset to the left -->
+<model name="obstacle_box_2">
+  <static>true</static>
+  <pose>5 2 0.25 0 0 0.5</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+      <material>
+        <ambient>0.2 0.2 0.8 1</ambient>
+        <diffuse>0.2 0.2 0.8 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<!-- Obstacle 3: Cylinder to the right -->
+<model name="obstacle_cylinder_1">
+  <static>true</static>
+  <pose>4 -2 0.5 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
+      <material>
+        <ambient>0.2 0.8 0.2 1</ambient>
+        <diffuse>0.2 0.8 0.2 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<!-- Obstacle 4: Sphere -->
+<model name="obstacle_sphere_1">
+  <static>true</static>
+  <pose>7 -1 0.3 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><sphere><radius>0.3</radius></sphere></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><sphere><radius>0.3</radius></sphere></geometry>
+      <material>
+        <ambient>0.9 0.7 0.1 1</ambient>
+        <diffuse>0.9 0.7 0.1 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<!-- Obstacle 5: Long wall -->
+<model name="obstacle_wall_1">
+  <static>true</static>
+  <pose>9 0 0.5 0 0 1.5708</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><box><size>4 0.2 1</size></box></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><box><size>4 0.2 1</size></box></geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 1</ambient>
+        <diffuse>0.5 0.5 0.5 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<!-- Obstacles 6 & 7: Narrow gap (1.0 m wide) for testing tight passages -->
+<model name="obstacle_gap_left">
+  <static>true</static>
+  <pose>12 1.0 0.5 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><box><size>0.5 1.5 1</size></box></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><box><size>0.5 1.5 1</size></box></geometry>
+      <material>
+        <ambient>0.6 0.3 0.1 1</ambient>
+        <diffuse>0.6 0.3 0.1 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
+
+<model name="obstacle_gap_right">
+  <static>true</static>
+  <pose>12 -1.0 0.5 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry><box><size>0.5 1.5 1</size></box></geometry>
+    </collision>
+    <visual name="visual">
+      <geometry><box><size>0.5 1.5 1</size></box></geometry>
+      <material>
+        <ambient>0.6 0.3 0.1 1</ambient>
+        <diffuse>0.6 0.3 0.1 1</diffuse>
+      </material>
+    </visual>
+  </link>
+</model>
 
     <model name="ground_plane">
       <static>true</static>
@@ -269,7 +392,7 @@ gz service -s /world/empty/create \
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>100 100</size>
+              <size>110 110</size>
             </plane>
           </geometry>
         </collision>
