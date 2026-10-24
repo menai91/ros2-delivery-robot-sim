@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="empty">
+
+    <!-- ===== Core systems (same as empty.sdf, plus Sensors) ===== -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"></plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>100 100</size></plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>100 100</size></plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== Walls: outer room (x -4..6, y -4..4) and interior walls ===== -->
+    <model name="room_walls">
+      <static>true</static>
+
+      <link name="wall_north">
+        <pose>1 4 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>10.2 0.2 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>10.2 0.2 1</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_south">
+        <pose>1 -4 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>10.2 0.2 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>10.2 0.2 1</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_west">
+        <pose>-4 0 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>0.2 7.8 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 7.8 1</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_east">
+        <pose>6 0 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>0.2 7.8 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 7.8 1</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Partition at x=2 with a 1.2 m doorway between y=0.4 and y=1.6 -->
+      <link name="partition_south">
+        <pose>2 -1.75 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>0.2 4.3 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 4.3 1</size></box></geometry>
+          <material><ambient>0.6 0.65 0.7 1</ambient><diffuse>0.6 0.65 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="partition_north">
+        <pose>2 2.75 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>0.2 2.3 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 2.3 1</size></box></geometry>
+          <material><ambient>0.6 0.65 0.7 1</ambient><diffuse>0.6 0.65 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Short wall sticking out of the east wall, forming an alcove -->
+      <link name="alcove_wall">
+        <pose>5 -1 0.5 0 0 0</pose>
+        <collision name="collision"><geometry><box><size>2 0.2 1</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>2 0.2 1</size></box></geometry>
+          <material><ambient>0.6 0.65 0.7 1</ambient><diffuse>0.6 0.65 0.7 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== Props (give the lidar varied shapes to match against) ===== -->
+
+    <!-- Island in the west room: the robot can drive a full loop around it -->
+    <model name="island">
+      <static>true</static>
+      <pose>-1.5 1.8 0.4 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.6 0.8 0.8</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>1.6 0.8 0.8</size></box></geometry>
+          <material><ambient>0.6 0.4 0.2 1</ambient><diffuse>0.6 0.4 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_pillar">
+      <static>true</static>
+      <pose>-2 -2.2 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><cylinder><radius>0.3</radius><length>1</length></cylinder></geometry></collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.3</radius><length>1</length></cylinder></geometry>
+          <material><ambient>0.2 0.5 0.3 1</ambient><diffuse>0.2 0.5 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Rotated box: an edge that is not aligned with the walls -->
+    <model name="angled_box">
+      <static>true</static>
+      <pose>0.8 -2.8 0.25 0 0 0.5</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.7 0.4 0.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.7 0.4 0.5</size></box></geometry>
+          <material><ambient>0.7 0.3 0.3 1</ambient><diffuse>0.7 0.3 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_pillar">
+      <static>true</static>
+      <pose>3.8 1.0 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><cylinder><radius>0.25</radius><length>1</length></cylinder></geometry></collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.25</radius><length>1</length></cylinder></geometry>
+          <material><ambient>0.3 0.3 0.7 1</ambient><diffuse>0.3 0.3 0.7 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_box">
+      <static>true</static>
+      <pose>4.2 2.3 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.6 0.6 0.6</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.6 0.6</size></box></geometry>
+          <material><ambient>0.8 0.7 0.2 1</ambient><diffuse>0.8 0.7 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
