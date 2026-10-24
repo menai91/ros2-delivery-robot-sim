@@ -2,31 +2,46 @@ import os
  
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
  
 def generate_launch_description():
     
     pkg_share = get_package_share_directory('ros2_project')
-    ros_gz_sim_share = get_package_share_directory('ros_gz_sim')
- 
     # Read the URDF into a string (same as the display launch file)
     urdf_path = os.path.join(pkg_share, 'urdf', 'myrobot.urdf')
     with open(urdf_path, 'r') as f:
         robot_description = f.read()
+
+    world_arg = DeclareLaunchArgument(
+        'world',
+        default_value='my_world.sdf',
+        description='Name of the SDF world file to load'
+    )
+
+    world_file = PathJoinSubstitution([
+        pkg_share,
+        'worlds',
+        LaunchConfiguration('world')
+    ])
+
+    ros_gz_sim_share = get_package_share_directory('ros_gz_sim')
  
-    world_file = os.path.join(
-        get_package_share_directory('ros2_project'), 'worlds', 'my_world.sdf')
-        
     # Use IncludeLaunchDescription to launch another launch.py
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim_share, 'launch', 'gz_sim.launch.py')
         ),
-            launch_arguments={'gz_args': f'-r {world_file}'}.items(),
+        launch_arguments={
+            'gz_args': [
+                '-r ',
+                world_file,
+            ]
+        }.items(),
     )
- 
+
     # 2. Publish the URDF on /robot_description (and TF for the fixed joints)
     robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -50,6 +65,7 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 4. Create a bridge between ROS 2 and Gazebo so that it can send messages between one another
     gazebo_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -70,8 +86,9 @@ def generate_launch_description():
             output='screen',
    )
 
+    # 5. Load my rviz config 
     rviz_config = os.path.join(
-        get_package_share_directory('ros2_project'), 'rviz', 'urdf_config.rviz')
+        pkg_share, 'rviz', 'urdf_config.rviz')
 
     rviz_node = Node(
         package='rviz2',
@@ -81,11 +98,26 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 6. launch SLAM
+    slam_params = os.path.join(
+        get_package_share_directory('ros2_project'), 'config', 'slam_params.yaml')
+    
+    slam = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('slam_toolbox'),
+                'launch', 'online_async_launch.py')),
+        launch_arguments={
+            'slam_params_file': slam_params,
+            'use_sim_time': 'true',
+        }.items())
+
     return LaunchDescription([
+        world_arg,
         gz_sim,
         robot_state_publisher,
         spawn_robot,
         gazebo_bridge,
         rviz_node,
+        slam,
     ])
  
