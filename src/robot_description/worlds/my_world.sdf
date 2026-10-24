@@ -118,272 +118,163 @@ gz service -s /world/empty/create \
       </link>
     </model>
 
-    <model name='box'>
-      <pose>0.44877879436170964 -1.5064460283815451 0.49999999990199806 6.2287739151293738e-22 9.3279666454713669e-22 -3.6315533669320137e-22</pose>
-      <link name='box_link'>
-        <inertial>
-          <inertia>
-            <ixx>0.16666</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.16666</iyy>
-            <iyz>0</iyz>
-            <izz>0.16666</izz>
-          </inertia>
-          <mass>1</mass>
-          <pose>0 0 0 0 0 0</pose>
-        </inertial>
-        <collision name='box_collision'>
+    <model name="box_left">
+      <static>true</static>
+      <pose>2.5 1.2 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
           <geometry>
-            <box>
-              <size>1 1 1</size>
-            </box>
+            <box><size>0.5 0.5 0.5</size></box>
           </geometry>
-          <surface>
-            <friction>
-              <ode/>
-            </friction>
-            <bounce/>
-            <contact/>
-          </surface>
         </collision>
-        <visual name='box_visual'>
+        <visual name="visual">
           <geometry>
-            <box>
-              <size>1 1 1</size>
-            </box>
+            <box><size>0.5 0.5 0.5</size></box>
           </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="cylinder_right">
+      <static>true</static>
+      <pose>2.0 -1.5 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder><radius>0.25</radius><length>0.5</length></cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder><radius>0.25</radius><length>0.5</length></cylinder>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="obstacle_box_1">
+      <static>true</static>
+      <pose>3 0 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1 1 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1 1 1</size></box></geometry>
           <material>
-            <ambient>0.300000012 0.300000012 0.300000012 1</ambient>
-            <diffuse>0.699999988 0.699999988 0.699999988 1</diffuse>
-            <specular>1 1 1 1</specular>
+            <ambient>0.8 0.2 0.2 1</ambient>
+            <diffuse>0.8 0.2 0.2 1</diffuse>
           </material>
         </visual>
-        <pose>0 0 0 0 0 0</pose>
-        <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
-      <self_collide>false</self_collide>
     </model>
-    <model name='sphere'>
-      <pose>1.2311970384020334 1.3657120229602755 0.499999999902001 0 0 0</pose>
-      <link name='sphere_link'>
-        <inertial>
-          <inertia>
-            <ixx>0.10000000000000001</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.10000000000000001</iyy>
-            <iyz>0</iyz>
-            <izz>0.10000000000000001</izz>
-          </inertia>
-          <mass>1</mass>
-          <pose>0 0 0 0 0 0</pose>
-        </inertial>
-        <collision name='sphere_collision'>
-          <geometry>
-            <sphere>
-              <radius>0.5</radius>
-            </sphere>
-          </geometry>
-          <surface>
-            <friction>
-              <ode/>
-            </friction>
-            <bounce/>
-            <contact/>
-          </surface>
+
+    <!-- Obstacle 2: Box offset to the left -->
+    <model name="obstacle_box_2">
+      <static>true</static>
+      <pose>5 2 0.25 0 0 0.5</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
         </collision>
-        <visual name='sphere_visual'>
-          <geometry>
-            <sphere>
-              <radius>0.5</radius>
-            </sphere>
-          </geometry>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
           <material>
-            <ambient>0.300000012 0.300000012 0.300000012 1</ambient>
-            <diffuse>0.699999988 0.699999988 0.699999988 1</diffuse>
-            <specular>1 1 1 1</specular>
+            <ambient>0.2 0.2 0.8 1</ambient>
+            <diffuse>0.2 0.2 0.8 1</diffuse>
           </material>
         </visual>
-        <pose>0 0 0 0 0 0</pose>
-        <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
-      <self_collide>false</self_collide>
     </model>
-    <model name='cone'>
-      <pose>-0.77158986524146922 2.1158600642814571 0.49999999993296756 5.2539673238603227e-17 -7.7132841034849224e-10 -2.2042306062451038e-22</pose>
-      <link name='cone_link'>
-        <inertial>
-          <inertia>
-            <ixx>0.074999999999999997</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.074999999999999997</iyy>
-            <iyz>0</iyz>
-            <izz>0.074999999999999997</izz>
-          </inertia>
-          <mass>1</mass>
-          <pose>0 0 0 0 0 0</pose>
-        </inertial>
-        <collision name='cone_collision'>
-          <geometry>
-            <cone>
-              <radius>0.5</radius>
-              <length>1</length>
-            </cone>
-          </geometry>
-          <surface>
-            <friction>
-              <ode/>
-            </friction>
-            <bounce/>
-            <contact/>
-          </surface>
+
+    <!-- Obstacle 3: Cylinder to the right -->
+    <model name="obstacle_cylinder_1">
+      <static>true</static>
+      <pose>4 -2 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
         </collision>
-        <visual name='cone_visual'>
-          <geometry>
-            <cone>
-              <radius>0.5</radius>
-              <length>1</length>
-            </cone>
-          </geometry>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
           <material>
-            <ambient>0.300000012 0.300000012 0.300000012 1</ambient>
-            <diffuse>0.699999988 0.699999988 0.699999988 1</diffuse>
-            <specular>1 1 1 1</specular>
+            <ambient>0.2 0.8 0.2 1</ambient>
+            <diffuse>0.2 0.8 0.2 1</diffuse>
           </material>
         </visual>
-        <pose>0 0 0 0 0 0</pose>
-        <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
-      <self_collide>false</self_collide>
     </model>
-<model name="obstacle_box_1">
-  <static>true</static>
-  <pose>3 0 0.5 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><box><size>1 1 1</size></box></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><box><size>1 1 1</size></box></geometry>
-      <material>
-        <ambient>0.8 0.2 0.2 1</ambient>
-        <diffuse>0.8 0.2 0.2 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
 
-<!-- Obstacle 2: Box offset to the left -->
-<model name="obstacle_box_2">
-  <static>true</static>
-  <pose>5 2 0.25 0 0 0.5</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
-      <material>
-        <ambient>0.2 0.2 0.8 1</ambient>
-        <diffuse>0.2 0.2 0.8 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
+    <!-- Obstacle 4: Sphere -->
+    <model name="obstacle_sphere_1">
+      <static>true</static>
+      <pose>7 -1 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.3</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.3</radius></sphere></geometry>
+          <material>
+            <ambient>0.9 0.7 0.1 1</ambient>
+            <diffuse>0.9 0.7 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-<!-- Obstacle 3: Cylinder to the right -->
-<model name="obstacle_cylinder_1">
-  <static>true</static>
-  <pose>4 -2 0.5 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><cylinder><radius>0.4</radius><length>1</length></cylinder></geometry>
-      <material>
-        <ambient>0.2 0.8 0.2 1</ambient>
-        <diffuse>0.2 0.8 0.2 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
+    <!-- Obstacle 5: Long wall -->
+    <model name="obstacle_wall_1">
+      <static>true</static>
+      <pose>9 0 0.5 0 0 1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4 0.2 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4 0.2 1</size></box></geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-<!-- Obstacle 4: Sphere -->
-<model name="obstacle_sphere_1">
-  <static>true</static>
-  <pose>7 -1 0.3 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><sphere><radius>0.3</radius></sphere></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><sphere><radius>0.3</radius></sphere></geometry>
-      <material>
-        <ambient>0.9 0.7 0.1 1</ambient>
-        <diffuse>0.9 0.7 0.1 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
+    <!-- Obstacles 6 & 7: Narrow gap (1.0 m wide) for testing tight passages -->
+    <model name="obstacle_gap_left">
+      <static>true</static>
+      <pose>12 1.0 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 1.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 1.5 1</size></box></geometry>
+          <material>
+            <ambient>0.6 0.3 0.1 1</ambient>
+            <diffuse>0.6 0.3 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-<!-- Obstacle 5: Long wall -->
-<model name="obstacle_wall_1">
-  <static>true</static>
-  <pose>9 0 0.5 0 0 1.5708</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><box><size>4 0.2 1</size></box></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><box><size>4 0.2 1</size></box></geometry>
-      <material>
-        <ambient>0.5 0.5 0.5 1</ambient>
-        <diffuse>0.5 0.5 0.5 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
-
-<!-- Obstacles 6 & 7: Narrow gap (1.0 m wide) for testing tight passages -->
-<model name="obstacle_gap_left">
-  <static>true</static>
-  <pose>12 1.0 0.5 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><box><size>0.5 1.5 1</size></box></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><box><size>0.5 1.5 1</size></box></geometry>
-      <material>
-        <ambient>0.6 0.3 0.1 1</ambient>
-        <diffuse>0.6 0.3 0.1 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
-
-<model name="obstacle_gap_right">
-  <static>true</static>
-  <pose>12 -1.0 0.5 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry><box><size>0.5 1.5 1</size></box></geometry>
-    </collision>
-    <visual name="visual">
-      <geometry><box><size>0.5 1.5 1</size></box></geometry>
-      <material>
-        <ambient>0.6 0.3 0.1 1</ambient>
-        <diffuse>0.6 0.3 0.1 1</diffuse>
-      </material>
-    </visual>
-  </link>
-</model>
+    <model name="obstacle_gap_right">
+      <static>true</static>
+      <pose>12 -1.0 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 1.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 1.5 1</size></box></geometry>
+          <material>
+            <ambient>0.6 0.3 0.1 1</ambient>
+            <diffuse>0.6 0.3 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
     <model name="ground_plane">
       <static>true</static>
