@@ -285,7 +285,7 @@
       <gz_frame_id>lidar_link</gz_frame_id>
       <!-- name of the topic-->
       <topic>scan</topic>
-      <update_rate>30</update_rate>
+      <update_rate>15</update_rate>
       <always_on>true</always_on>
       <visualize>true</visualize>
       <lidar>
