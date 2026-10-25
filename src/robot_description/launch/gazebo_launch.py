@@ -3,9 +3,10 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
  
 def generate_launch_description():
     
@@ -20,6 +21,19 @@ def generate_launch_description():
         default_value='my_world.sdf',
         description='Name of the SDF world file to load'
     )
+
+    nav_arg = DeclareLaunchArgument(
+        'use_nav',
+        default_value='false',
+        description='Start Nav2 with the saved map (use with slam:=false)'
+    )
+    
+    slam_arg = DeclareLaunchArgument(
+        'use_slam',
+        default_value='false',
+        description='Start slam_toolbox (set false when using Nav2 with a saved map)'
+    )
+
 
     world_file = PathJoinSubstitution([
         pkg_share,
@@ -100,8 +114,16 @@ def generate_launch_description():
 
     # 6. launch SLAM
     slam_params = os.path.join(
-        get_package_share_directory('ros2_project'), 'config', 'slam_params.yaml')
+        pkg_share, 'config', 'slam_params.yaml')
     
+    slam_map_file = PathJoinSubstitution([
+        pkg_share,
+        'maps',
+        PythonExpression([
+            "'", LaunchConfiguration('world'), "'.removesuffix('.sdf') + '_map.yaml'"
+        ]),
+    ])
+
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('slam_toolbox'),
@@ -109,15 +131,31 @@ def generate_launch_description():
         launch_arguments={
             'slam_params_file': slam_params,
             'use_sim_time': 'true',
-        }.items())
-
+        }.items(),
+        condition=IfCondition(LaunchConfiguration('use_slam')))
+    
+    #7. Launch Nav2
+    nav2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('nav2_bringup'),
+                'launch', 'bringup_launch.py')),
+        launch_arguments={
+            'map': slam_map_file,
+            'params_file': os.path.join(pkg_share, 'config', 'nav2_params.yaml'),
+            'use_sim_time': 'true',
+        }.items(),
+        condition=IfCondition(LaunchConfiguration('use_nav')))
+        
     return LaunchDescription([
         world_arg,
+        slam_arg,
+        nav_arg,
         gz_sim,
         robot_state_publisher,
         spawn_robot,
         gazebo_bridge,
         rviz_node,
         slam,
+        nav2,
     ])
  

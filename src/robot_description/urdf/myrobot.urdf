@@ -264,11 +264,13 @@
   <gazebo>
     <!--publishes the simulated angle of every joint, so ROS can build the wheel TF frames   -->
     <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+    <!-- https://gazebosim.org/api/gazebo/6/classignition_1_1gazebo_1_1systems_1_1JointStatePublisher.html-->
       <topic>joint_states</topic>
     </plugin>
 
     <!-- Listens for velocity commands, spins the wheels, and publishes odometry -->
     <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+    <!-- https://gazebosim.org/api/gazebo/6/classignition_1_1gazebo_1_1systems_1_1DiffDrive.html-->
       <left_joint>left_wheel_joint</left_joint>
       <right_joint>right_wheel_joint</right_joint>
 
