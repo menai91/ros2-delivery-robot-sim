@@ -1,8 +1,8 @@
+#include "amr_navigation/go_to_pose.hpp"
+
 #include <chrono>
 #include <cmath>
 #include <memory>
-
-#include "nav_mission/go_to_pose.hpp"
 
 #include "rclcpp/executors.hpp" // needed to use rclcpp::spin
 

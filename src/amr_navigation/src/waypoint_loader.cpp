@@ -1,8 +1,8 @@
-#include "nav_mission/waypoint_loader.hpp"
-
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
+#include "amr_navigation/waypoint_loader.hpp"
 
 std::vector<Waypoint> load_waypoints(const std::string &path)
 {

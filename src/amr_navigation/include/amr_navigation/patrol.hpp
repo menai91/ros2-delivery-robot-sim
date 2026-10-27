@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "nav2_msgs/action/navigate_to_pose.hpp"
-#include "nav_mission/waypoint_loader.hpp"
+#include "amr_navigation/waypoint_loader.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
