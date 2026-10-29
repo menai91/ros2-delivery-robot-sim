@@ -64,10 +64,9 @@ int main(int argc, char **argv)
             // tick the Behavior tree
             status = tree.tickOnce();
 
-            /*spin_some() is responsible for triggering all the callback functions registered in the node
-            ex. SendGoalOptions, create_wall_timer
-            */
-            executor.spin_some();
+            /*spin_all() is responsible for triggering all the callback functions registered in the node
+            ex. SendGoalOptions, create_wall_timer */
+            executor.spin_all(std::chrono::milliseconds(5));
             next_tick += period;
             std::this_thread::sleep_until(next_tick);
         }

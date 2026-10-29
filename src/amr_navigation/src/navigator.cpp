@@ -226,7 +226,7 @@ namespace amr_navigation
     {
         // Cancels goals from every client on this server, not only ours (e.g. RViz goals too)
         ++pending_cancel_responses;
-        
+
         client_action->async_cancel_all_goals([this](const std::shared_ptr<NavAction::Impl::CancelGoalService::Response> response)
             {
                 --pending_cancel_responses;
