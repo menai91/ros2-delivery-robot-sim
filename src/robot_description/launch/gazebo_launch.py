@@ -18,7 +18,7 @@ def generate_launch_description():
 
     world_arg = DeclareLaunchArgument(
         'world',
-        default_value='my_world.sdf',
+        default_value='slam_world.sdf',
         description='Name of the SDF world file to load'
     )
 

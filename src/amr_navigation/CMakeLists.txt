@@ -12,25 +12,25 @@ find_package(rclcpp_action REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-add_executable(go_to_pose src/go_to_pose.cpp)
-add_executable(patrol src/patrol.cpp src/waypoint_loader.cpp)
+add_library(amr_navigation_lib src/navigator.cpp)
 
-target_include_directories(go_to_pose PUBLIC
+target_include_directories(amr_navigation_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
-target_include_directories(patrol PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+ament_target_dependencies(amr_navigation_lib rclcpp rclcpp_action nav2_msgs)
 
-ament_target_dependencies(go_to_pose rclcpp rclcpp_action nav2_msgs geometry_msgs)
+install(DIRECTORY include/
+  DESTINATION include/${PROJECT_NAME})
 
-ament_target_dependencies(patrol rclcpp rclcpp_action nav2_msgs geometry_msgs)
+install(TARGETS amr_navigation_lib
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
-install(TARGETS go_to_pose
-  DESTINATION lib/${PROJECT_NAME})
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
-install(TARGETS patrol
-  DESTINATION lib/${PROJECT_NAME})
+ament_export_dependencies(rclcpp rclcpp_action nav2_msgs)
 
 ament_package()

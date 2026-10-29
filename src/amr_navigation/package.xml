@@ -3,7 +3,7 @@
 <package format="3">
   <name>amr_navigation</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Non-blocking C++ wrapper around the Nav2 navigate_to_pose action.</description>
   <maintainer email="57908305+dwnenr@users.noreply.github.com">yj</maintainer>
   <license>Apache-2.0</license>
 

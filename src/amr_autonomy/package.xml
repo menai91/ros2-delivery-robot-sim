@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>amr_autonomy</name>
+  <version>0.0.0</version>
+  <description>Behavior-tree nodes, mission trees and the bt_runner executable for the robot autonomy layer.</description>
+  <maintainer email="57908305+dwnenr@users.noreply.github.com">yj</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>behaviortree_cpp</depend>
+  <depend>amr_navigation</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
