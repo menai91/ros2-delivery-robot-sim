@@ -102,7 +102,7 @@ int main(int argc, char **argv)
         const auto deadline = std::chrono::steady_clock::now() + limit;
         while (navigator->has_pending_responses() && std::chrono::steady_clock::now() < deadline)
         {
-            executor.spin_some();
+            executor.spin_all(std::chrono::milliseconds(5));
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     };
