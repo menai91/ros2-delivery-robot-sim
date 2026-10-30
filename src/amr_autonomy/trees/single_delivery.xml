@@ -1,8 +1,8 @@
 <root BTCPP_format="4" main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <Sequence>
-      <SubTree ID="Pickup" x="-3.5"  y="-3.49" yaw="3.14"/>
-      <SubTree ID="Dropoff" x="5.4"  y="-1.48" yaw="3.14"/>
+      <SubTree ID="Pickup" x="5.5"  y="-3.5" yaw="3.14"/>
+      <SubTree ID="Dropoff" x="1.5"  y="-3.5" yaw="3.14"/>
     </Sequence>
   </BehaviorTree>
 

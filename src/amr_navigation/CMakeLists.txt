@@ -11,14 +11,18 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
-add_library(amr_navigation_lib src/navigator.cpp)
+add_library(amr_navigation_lib
+  src/navigator.cpp
+  src/station_loader.cpp)
 
 target_include_directories(amr_navigation_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 ament_target_dependencies(amr_navigation_lib rclcpp rclcpp_action nav2_msgs)
+target_link_libraries(amr_navigation_lib yaml-cpp::yaml-cpp)
 
 install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME})
@@ -31,6 +35,6 @@ install(TARGETS amr_navigation_lib
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
-ament_export_dependencies(rclcpp rclcpp_action nav2_msgs)
+ament_export_dependencies(rclcpp rclcpp_action nav2_msgs yaml-cpp)
 
 ament_package()

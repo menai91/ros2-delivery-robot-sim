@@ -31,6 +31,6 @@ target_link_libraries(amr_autonomy_nodes amr_navigation::amr_navigation_lib)
 target_link_libraries(bt_runner amr_autonomy_nodes)
 
 install(TARGETS bt_runner DESTINATION lib/${PROJECT_NAME})
-install(DIRECTORY trees DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY trees config DESTINATION share/${PROJECT_NAME})
 
 ament_package()
