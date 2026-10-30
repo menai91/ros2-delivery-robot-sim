@@ -21,7 +21,7 @@ namespace amr_navigation
         }
     }
 
-    bool Navigator::start(const float x, const float y, const float yaw)
+    bool Navigator::start(const double x, const double y, const double yaw)
     {
         if (!client_action->action_server_is_ready())
         {
@@ -122,9 +122,10 @@ namespace amr_navigation
 
             if (feedback->number_of_recoveries > last_recoveries)
             {
-                last_recoveries = feedback->number_of_recoveries;
-                RCLCPP_WARN(node->get_logger(), "Nav2 is running a recovery behavior for goal #%u (%d so far)",
-                            current_goal_id, last_recoveries);
+                //commenting out to reduce spam
+                // last_recoveries = feedback->number_of_recoveries;
+                // RCLCPP_WARN(node->get_logger(), "Nav2 is running a recovery behavior for goal #%u (%d so far)",
+                //             current_goal_id, last_recoveries);
             }
 
             RCLCPP_DEBUG_THROTTLE(node->get_logger(), *node->get_clock(), 1000, "Goal #%u: %.2f m remaining",

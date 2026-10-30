@@ -1,8 +1,0 @@
-<root BTCPP_format="4">
-  <BehaviorTree ID="MainTree">
-    <Sequence>
-      <MoveToPosition x="-2.0" y="0.0" yaw="0.0"/>
-      <MoveToPosition x="3.0" y="0.0" yaw="3.14"/>
-    </Sequence>
-  </BehaviorTree>
-</root>

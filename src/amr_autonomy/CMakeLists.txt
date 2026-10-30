@@ -15,7 +15,10 @@ find_package(amr_navigation REQUIRED)
 
 add_executable(bt_runner src/bt_runner.cpp)
 
-add_library(amr_autonomy_nodes src/bt_move_to_position.cpp)
+add_library(amr_autonomy_nodes
+    src/bt_move_to_position.cpp
+    src/bt_pick_up_item.cpp
+    src/bt_drop_off_item.cpp)
 
 target_include_directories(amr_autonomy_nodes PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

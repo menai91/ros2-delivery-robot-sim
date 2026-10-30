@@ -1,0 +1,40 @@
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence>
+      <SubTree ID="Pickup" x="-3.5"  y="-3.49" yaw="3.14"/>
+      <SubTree ID="Dropoff" x="5.4"  y="-1.48" yaw="3.14"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Pickup">
+    <Sequence>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
+      <PickupItem/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Dropoff">
+    <Sequence>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
+      <DropoffItem/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MoveBT">
+    <Sequence>
+      <RetryUntilSuccessful num_attempts="3">
+        <Fallback>
+          <Timeout msec="60000">
+            <MoveToPosition x="{x}" y="{y}" yaw="{yaw}" error_code="{error_code}"/>
+          </Timeout>
+          <ScriptCondition code="error_code == 204 || error_code == 208"/>
+        </Fallback>
+      </RetryUntilSuccessful>
+       <!-- did the robot arrive to the destinated location or was RetryUntilSuccessful true because
+       of the error_code. So check again to make sure the robot actually did arrive -->
+      <ScriptCondition code="error_code == 0"/>
+    </Sequence>
+  </BehaviorTree>
+
+
+</root>

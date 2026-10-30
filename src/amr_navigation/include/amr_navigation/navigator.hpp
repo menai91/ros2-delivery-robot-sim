@@ -34,9 +34,9 @@ namespace amr_navigation
     class Navigator
     {
     public:
-        explicit Navigator(rclcpp::Node::SharedPtr node, std::chrono::seconds in_goal_response_timeout = std::chrono::seconds(10));
+        explicit Navigator(rclcpp::Node::SharedPtr node, std::chrono::seconds in_goal_response_timeout = std::chrono::seconds(3));
 
-        bool start(const float x, const float y, const float yaw);
+        bool start(const double x, const double y, const double yaw);
         
         NavStatus get_status() const { return status; }
         unsigned int get_error_code() const { return error_code; }

@@ -21,20 +21,19 @@ namespace amr_autonomy
     BT::PortsList MoveToPosition::providedPorts()
     {
         return {
-            BT::InputPort<float>("x", "x position to move to"),
-            BT::InputPort<float>("y", "y position to move to"),
-            BT::InputPort<float>("yaw", 0.0, "yaw to rotate to when reaching the target x,y position"),
+            BT::InputPort<double>("x", "x position to move to"),
+            BT::InputPort<double>("y", "y position to move to"),
+            BT::InputPort<double>("yaw", 0.0, "yaw to rotate to when reaching the target x,y position"),
 
-            // TODO: depending on how we use the output
-            // BT::OutputPort<int>("error_code", "Nav2 / Navigator error code of the last goal")
+            BT::OutputPort<int>("error_code", "Nav2 / Navigator error code of the last goal")
         };
     }
 
     BT::NodeStatus MoveToPosition::onStart()
     {
-        const auto x_position = getInput<float>("x");
-        const auto y_position = getInput<float>("y");
-        const auto yaw = getInput<float>("yaw");
+        const auto x_position = getInput<double>("x");
+        const auto y_position = getInput<double>("y");
+        const auto yaw = getInput<double>("yaw");
 
         if (!x_position)
         {
@@ -56,19 +55,24 @@ namespace amr_autonomy
             return BT::NodeStatus::FAILURE;
         }
 
-        if (!navigator->start(x_position.value(), y_position.value(), yaw.value()))
+        const bool is_started = navigator->start(x_position.value(), y_position.value(), yaw.value());
+        setOutput("error_code", static_cast<int>(navigator->get_error_code()));
+
+        if (!is_started)
         {
             RCLCPP_ERROR(logger(), "[%s] Navigator failed to start goal (%.2f, %.2f, %.2f), error code: %u",
                          name().c_str(), x_position.value(), y_position.value(), yaw.value(), navigator->get_error_code());
 
             return BT::NodeStatus::FAILURE;
         }
-
+        
         return BT::NodeStatus::RUNNING;
     }
 
     BT::NodeStatus MoveToPosition::onRunning()
     {
+        setOutput("error_code", static_cast<int>(navigator->get_error_code()));
+
         switch (navigator->get_status())
         {
         case amr_navigation::NavStatus::Running:
