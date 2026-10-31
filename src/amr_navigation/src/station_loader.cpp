@@ -6,7 +6,7 @@
 
 namespace amr_navigation
 {
-    StationMap load_stations(const std::string &path)
+    StationMap load_stations(const std::string &path, const std::string &section)
     {
         YAML::Node root;
         try
@@ -19,10 +19,10 @@ namespace amr_navigation
             throw std::runtime_error("Failed to load station file '" + path + "': " + e.what());
         }
 
-        const YAML::Node stations = root["stations"];
+        const YAML::Node stations = root[section];
         if (!stations || !stations.IsMap())
         {
-            throw std::runtime_error("Station file '" + path + "' has no 'stations:' map at the top level");
+            throw std::runtime_error("Station file '" + path + "' has no '" + section + ":' map at the top level");
         }
 
         StationMap result;
@@ -49,7 +49,7 @@ namespace amr_navigation
 
         if (result.empty())
         {
-            throw std::runtime_error("Station file '" + path + "' defines no stations");
+            throw std::runtime_error("Station file '" + path + "' has no entries under '" + section + ":'");
         }
 
         return result;

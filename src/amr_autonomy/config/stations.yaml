@@ -1,8 +1,11 @@
-# Named station poses in the map frame (metres, radians), loaded by amr_navigation::load_stations()
+# Named poses in the map frame (metres, radians), loaded by amr_navigation::load_stations(path, section)
+
+# loading / unloading stations, valid pickup and dropoff locations for deliveries
 stations:
   room1_station: {x: 5.5, y: -3.5, yaw: 3.14}
   room2_station: {x: 1.5,  y: -3.5, yaw: 3.14}
 
-#charging location for the robot to charge it's battery
+# charging location for the robot to charge its battery
+chargers:
   charger1: {x: 5.5, y: 3.5, yaw: 0.0}
   charger2: {x: -3.5, y: 3.6, yaw: 0.0}

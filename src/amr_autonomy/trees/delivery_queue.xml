@@ -1,0 +1,47 @@
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Repeat num_cycles="-1">
+      <Fallback>
+        <Sequence>
+          <GetNextTask pickup_x="{pickup_x}" pickup_y="{pickup_y}" pickup_yaw="{pickup_yaw}"
+            dropoff_x="{dropoff_x}" dropoff_y="{dropoff_y}" dropoff_yaw="{dropoff_yaw}"/> 
+          <SubTree ID="Pickup" x="{pickup_x}" y="{pickup_y}" yaw="{pickup_yaw}"/>
+          <SubTree ID="Dropoff" x="{dropoff_x}" y="{dropoff_y}" yaw="{dropoff_yaw}"/>
+        </Sequence>
+        <Sleep msec="1000"/>
+      </Fallback>
+    </Repeat>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Pickup">
+    <Sequence>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
+      <PickupItem/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Dropoff">
+    <Sequence>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
+      <DropoffItem/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MoveBT">
+    <Sequence>
+      <RetryUntilSuccessful num_attempts="3">
+        <Fallback>
+          <Timeout msec="60000">
+            <MoveToPosition x="{x}" y="{y}" yaw="{yaw}" error_code="{error_code}"/>
+          </Timeout>
+          <ScriptCondition code="error_code == 204 || error_code == 208"/>
+        </Fallback>
+      </RetryUntilSuccessful>
+       <!-- did the robot arrive to the destinated location or was RetryUntilSuccessful true because
+       of the error_code. So check again to make sure the robot actually did arrive -->
+      <ScriptCondition code="error_code == 0"/>
+    </Sequence>
+  </BehaviorTree>
+
+
+</root>
