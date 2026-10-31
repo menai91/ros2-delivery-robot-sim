@@ -1,5 +1,6 @@
 import os
- 
+
+import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
@@ -11,10 +12,9 @@ from launch.conditions import IfCondition
 def generate_launch_description():
     
     pkg_share = get_package_share_directory('ros2_project')
-    # Read the URDF into a string (same as the display launch file)
-    urdf_path = os.path.join(pkg_share, 'urdf', 'myrobot.urdf')
-    with open(urdf_path, 'r') as f:
-        robot_description = f.read()
+    # Expand the xacro into a plain URDF string
+    xacro_path = os.path.join(pkg_share, 'urdf', 'myrobot.urdf.xacro')
+    robot_description = xacro.process_file(xacro_path).toxml()
 
     world_arg = DeclareLaunchArgument(
         'world',

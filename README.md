@@ -14,7 +14,7 @@ The robot runs in one of three modes:
 
 | Package | Folder | Contents |
 | --- | --- | --- |
-| `ros2_project` | `src/robot_description/` | Robot model (URDF), Gazebo world, launch file, saved map, Nav2 and SLAM configuration |
+| `ros2_project` | `src/robot_description/` | Robot model (URDF, written as xacro), Gazebo world, launch file, saved map, Nav2 and SLAM configuration |
 | `amr_navigation` | `src/amr_navigation/` | `Navigator`: a non-blocking C++ wrapper around Nav2's `navigate_to_pose` action. No behavior-tree dependency. |
 | `amr_autonomy` | `src/amr_autonomy/` | Behavior-tree nodes (`MoveToPosition`, plus `PickupItem` and `DropoffItem` stubs), node registration, mission trees (`trees/`), and the `bt_runner` executable |
 
@@ -89,6 +89,7 @@ Trees are plain XML and are loaded at run time, so a tree can be edited without 
 - The demo tree runs one delivery with station poses fixed in the XML, and `bt_runner` exits when it finishes or fails.
 - When a goal can't be reached, the tree does not find out right away. Nav2 can't tell a wall from an obstacle that might move, so it first spends about 17 s trying to clear the way: spinning, backing up and checking again. Only after that does it report the goal as unreachable.
 - At startup, `bt_runner` waits up to 15 s for Nav2's action server to be discovered.
+- The wheel collision cylinders are rotated by 1.5708 rad (the `quarter_turn` property in `myrobot.urdf.xacro`), not exactly π/2. When a cylinder lies exactly flat, Gazebo handles its ground contact poorly and the wheels slip.
 
 ## Roadmap
 
