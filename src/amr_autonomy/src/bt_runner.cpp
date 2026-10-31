@@ -1,11 +1,19 @@
-#include "amr_autonomy/register_nodes.hpp"
 
-#include "rclcpp/node.hpp"
-#include "rclcpp/executors.hpp"
-
+#include <algorithm>
 #include <atomic>
 #include <csignal>
+#include <filesystem>
 #include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include "ament_index_cpp/get_package_share_directory.hpp"
+#include "amr_autonomy/delivery_request_server.hpp"
+#include "amr_autonomy/register_nodes.hpp"
+#include "amr_navigation/station_loader.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/executors.hpp"
 
 namespace
 {
@@ -16,13 +24,48 @@ namespace
     // How long to wait for outstanding Nav2 replies on exit, and for the cancel-all fallback.
     const auto pending_response_timeout = std::chrono::seconds(3);
     const auto cancel_all_timeout = std::chrono::seconds(1);
+
+    // Turns the command-line argument into a tree file: the argument itself if it is an existing file,
+    // otherwise <trees_dir>/<arg>.xml. Throws if neither exists, listing the trees in trees_dir.
+    std::string resolve_tree_path(const std::string &arg, const std::filesystem::path &trees_dir)
+    {
+        if (std::filesystem::is_regular_file(arg))
+        {
+            return arg;
+        }
+
+        // replace_extension accepts both "delivery_queue" and "delivery_queue.xml"
+        const std::filesystem::path installed_tree = trees_dir / std::filesystem::path(arg).replace_extension(".xml");
+        if (std::filesystem::is_regular_file(installed_tree))
+        {
+            return installed_tree.string();
+        }
+
+        std::vector<std::string> available;
+        for (const auto &entry : std::filesystem::directory_iterator(trees_dir))
+        {
+            if (entry.path().extension() == ".xml")
+            {
+                available.push_back(entry.path().stem().string());
+            }
+        }
+        std::sort(available.begin(), available.end());
+
+        std::string message = "'" + arg + "' is neither an existing file nor a tree in " + trees_dir.string() + " (available:";
+        for (const auto &name : available)
+        {
+            message += " " + name;
+        }
+        message += ")";
+        throw std::runtime_error(message);
+    }
 }
 
 int main(int argc, char **argv)
 {
     if (argc < 2)
     {
-        std::cerr << "Usage: " << argv[0] << " <path_to_behavior_tree.xml>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <tree name (e.g. delivery_queue) or path to a tree .xml>" << std::endl;
         return 1;
     }
 
@@ -53,8 +96,14 @@ int main(int argc, char **argv)
 
     try
     {
-        tree = factory.createTreeFromFile(argv[1]);
-        RCLCPP_INFO(node->get_logger(), "Loaded behavior tree from '%s'", argv[1]);
+        const std::filesystem::path share_dir = ament_index_cpp::get_package_share_directory("amr_autonomy");
+        const std::string tree_path = resolve_tree_path(argv[1], share_dir / "trees");
+        const std::string stations_file = (share_dir / "config" / "stations.yaml").string();
+
+        amr_autonomy::DeliveryRequestServer delivery_server(node, task_queue, amr_navigation::load_stations(stations_file));
+
+        tree = factory.createTreeFromFile(tree_path);
+        RCLCPP_INFO(node->get_logger(), "Loaded behavior tree from '%s'", tree_path.c_str());
 
         const auto period = std::chrono::milliseconds(10);
         auto next_tick = std::chrono::steady_clock::now();
@@ -74,7 +123,7 @@ int main(int argc, char **argv)
     }
     catch (const std::exception &e)
     {
-        RCLCPP_ERROR(node->get_logger(), "Behavior tree error: %s", e.what());
+        RCLCPP_ERROR(node->get_logger(), "Start up or behavior tree error: %s", e.what());
     }
 
     if (stop_requested)

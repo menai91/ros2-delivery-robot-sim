@@ -1,0 +1,5 @@
+Location pickup
+Location dropoff
+---
+bool accepted
+string message
