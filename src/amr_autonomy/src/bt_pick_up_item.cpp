@@ -21,7 +21,7 @@ namespace amr_autonomy
 
     BT::NodeStatus PickupItem::onStart()
     {
-        //for now, stay in the DropoffItem node for 5 seconds
+        //for now, stay in the PickupItem node for 5 seconds
         end_time = std::chrono::steady_clock::now() + std::chrono::seconds(5);
         RCLCPP_INFO(logger(), "[%s] Started", name().c_str());
 

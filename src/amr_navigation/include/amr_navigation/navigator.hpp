@@ -2,7 +2,9 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
 
+#include "amr_navigation/pose2d.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -50,6 +52,8 @@ namespace amr_navigation
         using GoalHandle = rclcpp_action::ClientGoalHandle<NavAction>;
         using CancelResponse = NavAction::Impl::CancelGoalService::Response;
 
+        void send_goal(const unsigned int current_goal_id, const Pose2D &pose);
+        void on_goal_finished(const unsigned int finished_goal_id);
         void set_status(const NavStatus in_status) { status = in_status; }
         void set_error_code(const unsigned int in_error_code) { error_code = in_error_code; }
 
@@ -69,8 +73,14 @@ namespace amr_navigation
         unsigned int error_code = 0;
         unsigned int goal_id_counter = 0;
 
+        // Used to determine if there is currently an ongoing Nav2 goal. 0 means none
+        unsigned int ongoing_goal_id = 0;
         unsigned int pending_goal_responses = 0;
         unsigned int pending_cancel_responses = 0;
+
+        // A goal from start() that waits for ongoing_goal_id to finish before it is sent.
+        std::optional<Pose2D> held_goal;
+
     };
 
 } // namespace amr_navigation

@@ -43,7 +43,7 @@ namespace amr_autonomy
             return true;
         };
 
-        if (!parse_location(request->pickup, new_task.pickup_position))
+        if (!parse_location(request->pickup, new_task.pickup_pose))
         {
             response->accepted = false;
             response->message = "unknown pickup station '" + request->pickup.station + "'";
@@ -51,7 +51,7 @@ namespace amr_autonomy
             return;
         }
 
-        if (!parse_location(request->dropoff, new_task.dropoff_position))
+        if (!parse_location(request->dropoff, new_task.dropoff_pose))
         {
             response->accepted = false;
             response->message = "unknown dropoff station '" + request->dropoff.station + "'";
@@ -63,8 +63,8 @@ namespace amr_autonomy
         response->accepted = true;
         response->message = "task has been queued";
 
-        const auto &pickup = new_task.pickup_position;
-        const auto &dropoff = new_task.dropoff_position;
+        const auto &pickup = new_task.pickup_pose;
+        const auto &dropoff = new_task.dropoff_pose;
         RCLCPP_INFO(logger, "Queued delivery: pickup (%.2f, %.2f, %.2f) -> dropoff (%.2f, %.2f, %.2f), %zu task(s) waiting",
                     pickup.x, pickup.y, pickup.yaw, dropoff.x, dropoff.y, dropoff.yaw, task_queue->size());
     }

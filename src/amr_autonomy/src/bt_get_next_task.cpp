@@ -2,6 +2,13 @@
 
 #include <string>
 
+#include "rclcpp/logging.hpp"
+
+namespace
+{
+    rclcpp::Logger logger() { return rclcpp::get_logger("GetNextTask"); }
+}
+
 namespace amr_autonomy
 {
     GetNextTask::GetNextTask(const std::string &name, const BT::NodeConfig &config, std::shared_ptr<amr_autonomy::TaskQueue> in_task_queue)
@@ -32,12 +39,17 @@ namespace amr_autonomy
             return BT::NodeStatus::FAILURE;
         }
 
-        setOutput("pickup_x", task->pickup_position.x);
-        setOutput("pickup_y", task->pickup_position.y);
-        setOutput("pickup_yaw", task->pickup_position.yaw);
-        setOutput("dropoff_x", task->dropoff_position.x);
-        setOutput("dropoff_y", task->dropoff_position.y);
-        setOutput("dropoff_yaw", task->dropoff_position.yaw);
+        RCLCPP_INFO(logger(), "[%s] Starting task #%u: pickup (%.2f, %.2f, %.2f) -> dropoff (%.2f, %.2f, %.2f)",
+                    name().c_str(), task->task_id,
+                    task->pickup_pose.x, task->pickup_pose.y, task->pickup_pose.yaw,
+                    task->dropoff_pose.x, task->dropoff_pose.y, task->dropoff_pose.yaw);
+
+        setOutput("pickup_x", task->pickup_pose.x);
+        setOutput("pickup_y", task->pickup_pose.y);
+        setOutput("pickup_yaw", task->pickup_pose.yaw);
+        setOutput("dropoff_x", task->dropoff_pose.x);
+        setOutput("dropoff_y", task->dropoff_pose.y);
+        setOutput("dropoff_yaw", task->dropoff_pose.yaw);
 
         return BT::NodeStatus::SUCCESS;
     }
