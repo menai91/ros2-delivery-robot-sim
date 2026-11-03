@@ -86,9 +86,10 @@ int main(int argc, char **argv)
 
     auto navigator = std::make_shared<amr_navigation::Navigator>(node);
     auto task_queue = std::make_shared<amr_autonomy::TaskQueue>();
+    auto payload = std::make_shared<amr_autonomy::Payload>();
 
     BT::BehaviorTreeFactory factory;
-    amr_autonomy::register_nodes(factory, navigator, task_queue);
+    amr_autonomy::register_nodes(factory, navigator, task_queue, payload);
 
     BT::Tree tree;
 

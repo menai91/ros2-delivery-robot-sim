@@ -25,7 +25,10 @@ add_library(amr_autonomy_nodes
     src/bt_pick_up_item.cpp
     src/bt_drop_off_item.cpp
     src/bt_get_next_task.cpp
+    src/bt_is_item_on_board.cpp
+    src/bt_clear_payload.cpp
     src/task_queue.cpp
+    src/payload.cpp
     )
 
 target_include_directories(amr_autonomy_nodes PUBLIC

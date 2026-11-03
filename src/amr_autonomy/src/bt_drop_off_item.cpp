@@ -9,9 +9,13 @@ namespace
 
 namespace amr_autonomy
 {
-    DropoffItem::DropoffItem(const std::string &name, const BT::NodeConfig &config)
-        : BT::StatefulActionNode(name, config)
+    DropoffItem::DropoffItem(const std::string &name, const BT::NodeConfig &config, std::shared_ptr<amr_autonomy::Payload> in_payload)
+        : BT::StatefulActionNode(name, config), payload(std::move(in_payload))
     {
+        if (payload == nullptr)
+        {
+            throw BT::RuntimeError("Payload is not valid");
+        }
     }
 
     BT::PortsList DropoffItem::providedPorts()
@@ -21,6 +25,12 @@ namespace amr_autonomy
 
     BT::NodeStatus DropoffItem::onStart()
     {
+        if (!payload->is_loaded())
+        {
+            RCLCPP_ERROR(logger(), "[%s] Cannot drop off, the robot is not carrying anything", name().c_str());
+            return BT::NodeStatus::FAILURE;
+        }
+
         //for now, stay in the DropoffItem node for 5 seconds
         end_time = std::chrono::steady_clock::now() + std::chrono::seconds(5);
         RCLCPP_INFO(logger(), "[%s] Started", name().c_str());
@@ -32,7 +42,8 @@ namespace amr_autonomy
     {
         if(std::chrono::steady_clock::now() >= end_time)
         {
-            RCLCPP_INFO(logger(), "[%s] Finished", name().c_str());
+            payload->unload();
+            RCLCPP_INFO(logger(), "[%s] Finished, item unloaded", name().c_str());
             return BT::NodeStatus::SUCCESS;
         }
 
