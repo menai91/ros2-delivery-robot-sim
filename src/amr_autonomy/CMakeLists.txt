@@ -27,6 +27,7 @@ add_library(amr_autonomy_nodes
     src/bt_get_next_task.cpp
     src/bt_is_item_on_board.cpp
     src/bt_clear_payload.cpp
+    src/bt_set_task_outcome.cpp
     src/task_queue.cpp
     src/payload.cpp
     )

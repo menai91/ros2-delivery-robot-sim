@@ -4,44 +4,136 @@
       <Fallback>
         <Sequence>
           <GetNextTask pickup_x="{pickup_x}" pickup_y="{pickup_y}" pickup_yaw="{pickup_yaw}"
-            dropoff_x="{dropoff_x}" dropoff_y="{dropoff_y}" dropoff_yaw="{dropoff_yaw}"/> 
-          <SubTree ID="Pickup" x="{pickup_x}" y="{pickup_y}" yaw="{pickup_yaw}"/>
-          <SubTree ID="Dropoff" x="{dropoff_x}" y="{dropoff_y}" yaw="{dropoff_yaw}"/>
+            dropoff_x="{dropoff_x}" dropoff_y="{dropoff_y}" dropoff_yaw="{dropoff_yaw}"/>
+          <SubTree ID="ExecuteTask" _autoremap="true"/>
         </Sequence>
         <Sleep msec="1000"/>
       </Fallback>
     </Repeat>
   </BehaviorTree>
 
+  <BehaviorTree ID="ExecuteTask">
+    <Sequence>
+      <!-- create the shared entries here, so the subtrees below write to these (via _autoremap) instead of creating their own local copies -->
+      <Script code="attempt_result := Attempt_Retry; error_code := 0"/>
+      <Fallback>
+        <RetryUntilSuccessful num_attempts="3">
+          <SubTree ID="AttemptTask" _autoremap="true"/>
+        </RetryUntilSuccessful>
+        <AlwaysSuccess/>
+      </Fallback>
+      <SubTree ID="RecordOutcome" _autoremap="true"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="AttemptTask">
+    <Fallback>
+      <Sequence>
+        <SubTree ID="Delivery" _autoremap="true"/>
+        <Script code="attempt_result := Attempt_Delivered"/>
+      </Sequence>
+      <!-- The delivery failed. If an item is on board, take it back to the pickup station first. -->
+      <Sequence>
+        <IsItemOnBoard/>
+        <Fallback>
+          <!-- no error_code remap, so the error that caused the failure is kept for the 204 check -->
+          <SubTree ID="ReturnItem" x="{pickup_x}" y="{pickup_y}" yaw="{pickup_yaw}"/>
+          <Script code="attempt_result := Attempt_ReturnFailed"/>
+        </Fallback>
+        <ScriptCondition code="attempt_result == Attempt_ReturnFailed"/>
+      </Sequence>
+      <!-- Check if goal is outside of the map (error_code == 204). If it is, do not retry this task as it is not possible to complete -->
+      <Sequence>
+        <ScriptCondition code="error_code == 204"/>
+        <Script code="attempt_result := Attempt_GoalOutsideMap"/>
+      </Sequence>
+    </Fallback>
+  </BehaviorTree>
+
+  <!-- Pickup then dropoff. Each attempt starts again from pickup -->
+  <BehaviorTree ID="Delivery">
+    <Sequence>
+      <!-- clear the error of an earlier attempt -->
+      <Script code="error_code := 0"/>
+      <SubTree ID="Pickup" x="{pickup_x}" y="{pickup_y}" yaw="{pickup_yaw}" error_code="{error_code}"/>
+      <SubTree ID="Dropoff" x="{dropoff_x}" y="{dropoff_y}" yaw="{dropoff_yaw}" error_code="{error_code}"/>
+    </Sequence>
+  </BehaviorTree>
+
   <BehaviorTree ID="Pickup">
     <Sequence>
-      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
-      <PickupItem/>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}" error_code="{error_code}"/>
+      <RetryUntilSuccessful num_attempts="2">
+        <PickupItem name="LoadAtPickup"/>
+      </RetryUntilSuccessful>
     </Sequence>
   </BehaviorTree>
 
   <BehaviorTree ID="Dropoff">
     <Sequence>
-      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
-      <DropoffItem/>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}" error_code="{error_code}"/>
+      <RetryUntilSuccessful num_attempts="2">
+        <DropoffItem name="UnloadAtDropoff"/>
+      </RetryUntilSuccessful>
     </Sequence>
   </BehaviorTree>
 
+  <!-- returns the item that the robot has picked up -->
+  <BehaviorTree ID="ReturnItem">
+    <Sequence>
+      <SubTree ID="MoveBT" x="{x}" y="{y}" yaw="{yaw}"/>
+      <RetryUntilSuccessful num_attempts="2">
+        <DropoffItem name="UnloadOnReturn"/>
+      </RetryUntilSuccessful>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Turns attempt_result into a TaskOutcome for TaskQueue. Exactly one branch runs -->
+  <BehaviorTree ID="RecordOutcome">
+    <Fallback>
+      <Sequence>
+        <ScriptCondition code="attempt_result == Attempt_Delivered"/>
+        <SetTaskOutcome outcome="Task_Completed"/>
+      </Sequence>
+      <Sequence>
+        <ScriptCondition code="attempt_result == Attempt_GoalOutsideMap"/>
+        <SetTaskOutcome outcome="Task_Failed_Discard" reason="goal outside the map (204)"/>
+      </Sequence>
+      <Sequence>
+        <ScriptCondition code="attempt_result == Attempt_ReturnFailed"/>
+        <!-- TODO: OperatorAlert goes here once it exists -->
+        <!-- Simulated: assume a human removes the bin. A real robot would hold until confirmed -->
+        <Sleep msec="5000"/>
+        <ClearPayload/>
+        <SetTaskOutcome outcome="Task_Failed_Discard" reason="could not return the bin to the pickup station"/>
+      </Sequence>
+      <Sequence>
+        <ScriptCondition code="attempt_result == Attempt_Retry"/>
+        <SetTaskOutcome outcome="Task_Failed_Requeue" reason="all attempts failed"/>
+      </Sequence>
+      <!-- Default: should never run. Reached if attempt_result has a value with no branch above,
+           or if a branch matched but its body failed (e.g. a misspelled outcome name).
+           Discard the task, so it is not silently re-queued or resumed forever -->
+      <SetTaskOutcome outcome="Task_Failed_Discard" reason="BUG: no RecordOutcome branch handled attempt_result"/>
+    </Fallback>
+  </BehaviorTree>
+
+  <!-- Drives to (x, y, yaw): up to 2 attempts, 60 s each. Output error_code: the Navigator / Nav2 error of the last attempt, 0 = arrived. -->
   <BehaviorTree ID="MoveBT">
     <Sequence>
-      <RetryUntilSuccessful num_attempts="3">
+      <RetryUntilSuccessful num_attempts="2">
         <Fallback>
           <Timeout msec="60000">
             <MoveToPosition x="{x}" y="{y}" yaw="{yaw}" error_code="{error_code}"/>
           </Timeout>
+          <!-- 204 (goal outside map) / 208 (no valid path): retrying the same goal right away
+               cannot fix these, so stop retrying -->
           <ScriptCondition code="error_code == 204 || error_code == 208"/>
         </Fallback>
       </RetryUntilSuccessful>
-       <!-- did the robot arrive to the destinated location or was RetryUntilSuccessful true because
+      <!-- did the robot arrive to the destinated location or was RetryUntilSuccessful true because
        of the error_code. So check again to make sure the robot actually did arrive -->
       <ScriptCondition code="error_code == 0"/>
     </Sequence>
   </BehaviorTree>
-
-
 </root>

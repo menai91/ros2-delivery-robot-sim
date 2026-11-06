@@ -2,12 +2,14 @@
 
 #include <memory>
 
+#include "amr_autonomy/attempt_result.hpp"
 #include "amr_autonomy/bt_clear_payload.hpp"
 #include "amr_autonomy/bt_drop_off_item.hpp"
 #include "amr_autonomy/bt_get_next_task.hpp"
 #include "amr_autonomy/bt_is_item_on_board.hpp"
 #include "amr_autonomy/bt_move_to_position.hpp"
 #include "amr_autonomy/bt_pick_up_item.hpp"
+#include "amr_autonomy/bt_set_task_outcome.hpp"
 #include "amr_autonomy/payload.hpp"
 
 #include "amr_navigation/navigator.hpp"
@@ -28,6 +30,10 @@ namespace amr_autonomy
         factory.registerNodeType<IsItemOnBoard>("IsItemOnBoard", payload);
         factory.registerNodeType<ClearPayload>("ClearPayload", payload);
         factory.registerNodeType<GetNextTask>("GetNextTask", task_queue);
+        factory.registerNodeType<SetTaskOutcome>("SetTaskOutcome", task_queue);
+
+        factory.registerScriptingEnums<TaskOutcome>();
+        factory.registerScriptingEnums<AttemptResult>();
     }
 
 } // namespace amr_autonomy

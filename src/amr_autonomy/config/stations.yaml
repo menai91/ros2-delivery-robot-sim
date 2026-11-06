@@ -2,8 +2,8 @@
 
 # loading / unloading stations, valid pickup and dropoff locations for deliveries
 stations:
-  room1_station: {x: 5.5, y: -3.5, yaw: 3.14}
-  room2_station: {x: 1.5,  y: -3.5, yaw: 3.14}
+  room1_station: {x: 5.35, y: -3.35, yaw: 3.1416}
+  room2_station: {x: -1.0, y: -3.35, yaw: 1.5708}
 
 # charging location for the robot to charge its battery
 chargers:

@@ -33,7 +33,7 @@ namespace amr_autonomy
 
     BT::NodeStatus GetNextTask::tick()
     {
-        auto task = task_queue->pop();
+        auto task = task_queue->get_next_task();
         if(!task.has_value())
         {
             return BT::NodeStatus::FAILURE;
